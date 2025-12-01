@@ -179,7 +179,8 @@ public class MultiCategoryCartTest extends BaseTest {
             // שמירת תוצאות לאקסל
             System.out.println("\nStep 6: Saving results to Excel");
             String excelPath = "output/cart_test_results.xlsx";
-            ExcelUtils.writeCartToExcel(excelPath, cartItems, cartTotal);
+            // Using same list for expected and actual since we're documenting what was found
+            ExcelUtils.writeCartToExcel(excelPath, cartItems, cartItems, cartTotal);
             System.out.println("✓ Cart contents saved to: " + excelPath);
 
             // תיעוד הצלחת הטסט

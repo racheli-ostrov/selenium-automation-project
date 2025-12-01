@@ -16,34 +16,146 @@ import java.time.format.DateTimeFormatter;
 
 public class ExcelUtils {
 
-    public static void writeCartToExcel(String path, List<pages.CartPage.CartItem> items, String total) throws Exception {
-        Workbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("Cart");
-
-        Row header = sheet.createRow(0);
-        header.createCell(0).setCellValue("Name");
-        header.createCell(1).setCellValue("Price");
-        header.createCell(2).setCellValue("Quantity");
-        header.createCell(3).setCellValue("RowTotal");
-
-        int rowIdx = 1;
-        for (pages.CartPage.CartItem it : items) {
-            Row r = sheet.createRow(rowIdx++);
-            r.createCell(0).setCellValue(it.name);
-            r.createCell(1).setCellValue(it.price);
-            r.createCell(2).setCellValue(it.qty);
-            r.createCell(3).setCellValue(it.rowTotal);
+    // פונקציה עם השוואה בין מצופה לבפועל (4 פרמטרים)
+    public static void writeCartToExcel(String path, List<pages.CartPage.CartItem> expectedItems, 
+                                         List<pages.CartPage.CartItem> actualItems, String total) throws Exception {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        
+        // Create styles
+        XSSFCellStyle headerStyle = workbook.createCellStyle();
+        XSSFFont headerFont = workbook.createFont();
+        headerFont.setBold(true);
+        headerFont.setFontHeightInPoints((short) 12);
+        headerStyle.setFont(headerFont);
+        headerStyle.setFillForegroundColor(IndexedColors.LIGHT_BLUE.getIndex());
+        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        
+        XSSFCellStyle successStyle = workbook.createCellStyle();
+        successStyle.setFillForegroundColor(IndexedColors.LIGHT_GREEN.getIndex());
+        successStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        
+        XSSFCellStyle failStyle = workbook.createCellStyle();
+        failStyle.setFillForegroundColor(IndexedColors.CORAL.getIndex());
+        failStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        
+        // Sheet 1: Expected vs Actual Comparison
+        Sheet comparisonSheet = workbook.createSheet("השוואה (Comparison)");
+        Row header = comparisonSheet.createRow(0);
+        String[] headers = {"פריט (Item)", "כמות מצופה (Expected Qty)", "כמות בפועל (Actual Qty)", 
+                            "מחיר מצופה (Expected Price)", "מחיר בפועל (Actual Price)", "סטטוס (Status)"};
+        for (int i = 0; i < headers.length; i++) {
+            Cell cell = header.createCell(i);
+            cell.setCellValue(headers[i]);
+            cell.setCellStyle(headerStyle);
+            comparisonSheet.setColumnWidth(i, 5000);
         }
-        Row totalRow = sheet.createRow(rowIdx + 1);
-        totalRow.createCell(2).setCellValue("Cart Total");
-        totalRow.createCell(3).setCellValue(total);
-
+        
+        int rowIdx = 1;
+        boolean allMatch = true;
+        
+        // Compare expected vs actual
+        int maxItems = Math.max(expectedItems.size(), actualItems.size());
+        for (int i = 0; i < maxItems; i++) {
+            Row r = comparisonSheet.createRow(rowIdx++);
+            
+            pages.CartPage.CartItem expected = i < expectedItems.size() ? expectedItems.get(i) : null;
+            pages.CartPage.CartItem actual = i < actualItems.size() ? actualItems.get(i) : null;
+            
+            String itemName = expected != null ? expected.name : (actual != null ? actual.name : "N/A");
+            r.createCell(0).setCellValue(itemName);
+            
+            r.createCell(1).setCellValue(expected != null ? expected.qty : 0);
+            r.createCell(2).setCellValue(actual != null ? actual.qty : 0);
+            
+            r.createCell(3).setCellValue(expected != null ? expected.price : "N/A");
+            r.createCell(4).setCellValue(actual != null ? actual.price : "N/A");
+            
+            boolean itemMatches = expected != null && actual != null && expected.qty == actual.qty;
+            
+            Cell statusCell = r.createCell(5);
+            if (expected == null) {
+                statusCell.setCellValue("✗ פריט לא מצופה (Unexpected Item)");
+                statusCell.setCellStyle(failStyle);
+                allMatch = false;
+            } else if (actual == null) {
+                statusCell.setCellValue("✗ פריט חסר (Missing Item)");
+                statusCell.setCellStyle(failStyle);
+                allMatch = false;
+            } else if (itemMatches) {
+                statusCell.setCellValue("✓ תואם (Match)");
+                statusCell.setCellStyle(successStyle);
+            } else {
+                statusCell.setCellValue("✗ אי התאמה (Mismatch)");
+                statusCell.setCellStyle(failStyle);
+                allMatch = false;
+            }
+        }
+        
+        // Add total row
+        Row totalRow = comparisonSheet.createRow(rowIdx + 1);
+        Cell totalLabelCell = totalRow.createCell(4);
+        totalLabelCell.setCellValue("סה\"כ עגלה (Cart Total):");
+        totalLabelCell.setCellStyle(headerStyle);
+        Cell totalValueCell = totalRow.createCell(5);
+        totalValueCell.setCellValue(total);
+        totalValueCell.setCellStyle(headerStyle);
+        
+        // Sheet 2: Summary
+        Sheet summarySheet = workbook.createSheet("סיכום (Summary)");
+        int summaryRow = 0;
+        
+        Row timeRow = summarySheet.createRow(summaryRow++);
+        timeRow.createCell(0).setCellValue("זמן הרצה (Run Time):");
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        timeRow.createCell(1).setCellValue(timestamp);
+        
+        summaryRow++; // Empty row
+        
+        Row testResultRow = summarySheet.createRow(summaryRow++);
+        Cell resultLabel = testResultRow.createCell(0);
+        resultLabel.setCellValue("תוצאת בדיקה (Test Result):");
+        resultLabel.setCellStyle(headerStyle);
+        Cell resultValue = testResultRow.createCell(1);
+        if (allMatch && expectedItems.size() == actualItems.size()) {
+            resultValue.setCellValue("✓ הבדיקה עברה בהצלחה (PASS)");
+            resultValue.setCellStyle(successStyle);
+        } else {
+            resultValue.setCellValue("✗ הבדיקה נכשלה (FAIL)");
+            resultValue.setCellStyle(failStyle);
+        }
+        
+        summaryRow++; // Empty row
+        
+        Row expectedCountRow = summarySheet.createRow(summaryRow++);
+        expectedCountRow.createCell(0).setCellValue("פריטים מצופים (Expected Items):");
+        expectedCountRow.createCell(1).setCellValue(expectedItems.size());
+        
+        Row actualCountRow = summarySheet.createRow(summaryRow++);
+        actualCountRow.createCell(0).setCellValue("פריטים בפועל (Actual Items):");
+        actualCountRow.createCell(1).setCellValue(actualItems.size());
+        
+        Row totalQtyExpected = summarySheet.createRow(summaryRow++);
+        int expectedQty = expectedItems.stream().mapToInt(i -> i.qty).sum();
+        totalQtyExpected.createCell(0).setCellValue("כמות כוללת מצופה (Expected Total Qty):");
+        totalQtyExpected.createCell(1).setCellValue(expectedQty);
+        
+        Row totalQtyActual = summarySheet.createRow(summaryRow++);
+        int actualQty = actualItems.stream().mapToInt(i -> i.qty).sum();
+        totalQtyActual.createCell(0).setCellValue("כמות כוללת בפועל (Actual Total Qty):");
+        totalQtyActual.createCell(1).setCellValue(actualQty);
+        
+        summarySheet.autoSizeColumn(0);
+        summarySheet.autoSizeColumn(1);
+        
+        // Write to file
         File file = new File(path);
         file.getParentFile().mkdirs();
         try (FileOutputStream fos = new FileOutputStream(file)) {
             workbook.write(fos);
         }
         workbook.close();
+        
+        System.out.println("📊 דוח Excel נשמר ב: " + path);
     }
 
     // Append a single test result (testName, status) into an Excel file.

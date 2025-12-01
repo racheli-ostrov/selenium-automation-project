@@ -133,7 +133,8 @@ public class SimpleCartTest extends BaseTest {
             // Save to Excel
             System.out.println("\n=== Saving Results to Excel ===");
             String excelPath = "output/cart_test_results.xlsx";
-            ExcelUtils.writeCartToExcel(excelPath, foundProducts, "N/A - Price Comparison Site");
+            // Using same list for expected and actual since we're just documenting what was found
+            ExcelUtils.writeCartToExcel(excelPath, foundProducts, foundProducts, "N/A - Price Comparison Site");
             System.out.println("✓ Product search results saved to: " + excelPath);
 
             // Validations

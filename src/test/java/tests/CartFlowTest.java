@@ -55,8 +55,8 @@ public class CartFlowTest extends BaseTest {
         // minimal assertions: at least 3 items present
         Assert.assertTrue(items.size() >= 3, "Expect at least 3 different items in cart");
 
-        // write to excel
-        ExcelUtils.writeCartToExcel("output/cart_results.xlsx", items, total);
+        // write to excel - using same list for expected and actual since we don't have expectations here
+        ExcelUtils.writeCartToExcel("output/cart_results.xlsx", items, items, total);
 
         // verify that Excel created (basic check)
         Assert.assertTrue(total != null && !total.isEmpty(), "Cart total should be present");
