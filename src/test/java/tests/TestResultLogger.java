@@ -58,7 +58,6 @@ public class TestResultLogger implements ITestListener {
         long duration = System.currentTimeMillis() - suiteStart;
         writeLine("Suite finish: " + context.getName() + " (" + duration + " ms)\n");
         writeLine("Summary: passed=" + passed.get() + ", failed=" + failed.get() + ", skipped=" + skipped.get());
-        writeLine("Screenshots present: " + listScreenshotNames());
         writeLine("================ End Run ================\n\n");
         close();
     }
@@ -118,17 +117,6 @@ public class TestResultLogger implements ITestListener {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private String listScreenshotNames() {
-        File dir = new File("output/screenshots");
-        if (!dir.exists()) return "none";
-        File[] files = dir.listFiles((d, name) -> name.toLowerCase().endsWith(".png"));
-        if (files == null || files.length == 0) return "none";
-        StringBuilder sb = new StringBuilder();
-        for (File f : files) sb.append(f.getName()).append(", ");
-        if (sb.length() >= 2) sb.setLength(sb.length() - 2);
-        return sb.toString();
     }
 
     private void close() {

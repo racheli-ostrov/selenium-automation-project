@@ -3,7 +3,6 @@ package tests; // patched
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import pages.HomePage;
-import utils.ScreenshotUtils;
 import utils.ExcelUtils;
 import utils.ExcelUtils.CartItemReport;
 import java.nio.file.Files;
@@ -183,16 +182,15 @@ public class ExternalShopRedirectTest extends BaseTest {
                             String newQty = qtyInput.getAttribute("value");
                             System.out.println("כמות חדשה לאייפון בסל: " + newQty);
                         }
-                        // שמור צילום מסך וה-HTML לצורך בדיקה
+                        // שמור HTML לצורך בדיקה
                         try {
-                            ScreenshotUtils.captureScreenshot(driver, "cart_after_plus");
                             String html = driver.getPageSource();
                             Path out = Path.of("output", "lastprice_cart_after_plus.html");
                             Files.createDirectories(out.getParent());
                             Files.writeString(out, html);
-                            System.out.println("שמורה תמונת מסך ו-HTML לאחר לחיצת פלוס.");
+                            System.out.println("שמור HTML לאחר לחיצת פלוס.");
                         } catch (Exception ioex) {
-                            System.out.println("⚠️ לא ניתן לשמור צילום מסך/HTML: " + ioex.getMessage());
+                            System.out.println("⚠️ לא ניתן לשמור HTML: " + ioex.getMessage());
                         }
                     } catch (Exception e) {
                         System.out.println("⚠️ לא נמצא כפתור פלוס או שדה כמות לאייפון");

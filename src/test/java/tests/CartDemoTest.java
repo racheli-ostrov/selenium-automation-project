@@ -12,7 +12,6 @@ import pages.ProductPage;
 import pages.CartPage;
 import utils.VisualUtils;
 import utils.ExcelUtils;
-import utils.ScreenshotUtils;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -72,9 +71,6 @@ public class CartDemoTest extends BaseTest {
                     System.out.println("✓ Search submitted");
                     Thread.sleep(VISUAL_DELAY_MS + 2500); // המתנה לתוצאות
                     
-                    // צלם מסך של תוצאות החיפוש
-                    ScreenshotUtils.captureScreenshot(driver, "search_results_" + (i+1));
-                    
                     // לחץ על התוצאה הראשונה
                     System.out.println("Locating search results...");
                     By productLinks = By.cssSelector("a.product-item-link, .product-card a, .product-link, a[href*='product'], .product a, .product-item a, a[href*='/p/'], a[href*='sku']");
@@ -120,9 +116,6 @@ public class CartDemoTest extends BaseTest {
                     System.out.println("✓ Opened product page");
                     Thread.sleep(VISUAL_DELAY_MS + 1800);
                     
-                    // צלם מסך של דף המוצר
-                    ScreenshotUtils.captureScreenshot(driver, "product_page_" + (i+1));
-                    
                     // קרא פרטי מוצר
                     String productName = productPage.getName();
                     String productPrice = productPage.getPrice();
@@ -150,9 +143,6 @@ public class CartDemoTest extends BaseTest {
                     } catch (Exception ignored) {}
                     productPage.addToCart();
                     Thread.sleep(VISUAL_DELAY_MS + 1500);
-                    
-                    // צלם מסך אחרי הוספה לעגלה
-                    ScreenshotUtils.captureScreenshot(driver, "after_add_to_cart_" + (i+1));
                     
                     System.out.println("✓ Item " + (i+1) + " added to cart: " + productName + " x" + quantity);
                     
@@ -186,10 +176,6 @@ public class CartDemoTest extends BaseTest {
                             Thread.sleep(VISUAL_DELAY_MS + 2000);
                         }
                         
-                        // צלם את העגלה אחרי הוספת המוצר
-                        System.out.println("  📸 Capturing cart with " + (i+1) + " item(s)...");
-                        ScreenshotUtils.captureScreenshot(driver, "cart_after_item_" + (i+1));
-                        
                         // נסה להדגיש את תוכן העגלה
                         try {
                             List<WebElement> cartProducts = driver.findElements(By.cssSelector(".cart-item, .product-item, [class*='cart-product'], [class*='item-row']"));
@@ -200,17 +186,15 @@ public class CartDemoTest extends BaseTest {
                                 VisualUtils.highlight(driver, lastItem, "cart_item_highlighted_" + (i+1));
                             }
                         } catch (Exception highlight) {
-                            System.out.println("  (Could not highlight cart items, but screenshot saved)");
+                            System.out.println("  (Could not highlight cart items)");
                         }
                         
                         System.out.println("  ✓ Cart view captured");
                         
-                    } catch (Exception cartEx) {
-                        System.out.println("  ⚠ Could not navigate to cart: " + cartEx.getMessage());
-                        ScreenshotUtils.captureScreenshot(driver, "cart_error_" + (i+1));
-                    }
                     
-                    // המתן להודעת הצלחה ואז המשך
+                } catch (Exception cartEx) {
+                    System.out.println("  ⚠ Could not navigate to cart: " + cartEx.getMessage());
+                }                    // המתן להודעת הצלחה ואז המשך
                     Thread.sleep(VISUAL_DELAY_MS + 2000);
                     
                     // חזור לדף הבית לחיפוש הבא - באמצעות לוגו או ניווט
@@ -262,7 +246,6 @@ public class CartDemoTest extends BaseTest {
                     VisualUtils.highlight(driver, cartBtn, "cart_icon_final");
                     cartBtn.click();
                     Thread.sleep(VISUAL_DELAY_MS + 2000);
-                    ScreenshotUtils.captureScreenshot(driver, "final_cart_view");
                     System.out.println("✓ Opened cart to view all items");
                 } else {
                     System.out.println("⚠ Could not find cart button");
@@ -277,7 +260,6 @@ public class CartDemoTest extends BaseTest {
             try {
                 driver.get("https://www.lastprice.co.il/cart");
                 Thread.sleep(VISUAL_DELAY_MS + 3000);
-                ScreenshotUtils.captureScreenshot(driver, "final_cart_all_items");
                 
                 // הדגש את כל העגלה
                 try {
@@ -285,7 +267,7 @@ public class CartDemoTest extends BaseTest {
                     VisualUtils.highlight(driver, cartContainer, "final_cart_highlighted");
                     System.out.println("✓ Final cart view captured with all items");
                 } catch (Exception e) {
-                    System.out.println("✓ Final cart screenshot saved");
+                    System.out.println("✓ Final cart view captured");
                 }
             } catch (Exception finalCart) {
                 System.out.println("⚠ Could not navigate to final cart view: " + finalCart.getMessage());
@@ -398,13 +380,11 @@ public class CartDemoTest extends BaseTest {
             System.out.println("Excel Files Created:");
             System.out.println("1. output/cart_test_results.xlsx - Detailed cart contents");
             System.out.println("2. output/test_results.xlsx - Test execution summary");
-            System.out.println("3. output/screenshots/ - Screenshots of search and add process");
             System.out.println();
             System.out.println("Summary:");
             System.out.println("✓ Searched for 3 items using search bar");
             System.out.println("✓ Added items from 3 different product categories");
             System.out.println("✓ One item added with quantity of 2 units");
-            System.out.println("✓ All steps documented with screenshots");
             System.out.println("✓ Results exported to Excel");
 
         } catch (Exception e) {

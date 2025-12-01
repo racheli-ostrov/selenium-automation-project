@@ -4,7 +4,6 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 import pages.*;
 import utils.ExcelUtils;
-import utils.ScreenshotUtils;
 
 import java.util.List;
 
@@ -55,9 +54,6 @@ public class CartFlowTest extends BaseTest {
 
         // minimal assertions: at least 3 items present
         Assert.assertTrue(items.size() >= 3, "Expect at least 3 different items in cart");
-
-        // Save screenshot before Excel
-        ScreenshotUtils.takeScreenshot(driver, "cart_before_excel.png");
 
         // write to excel
         ExcelUtils.writeCartToExcel("output/cart_results.xlsx", items, total);

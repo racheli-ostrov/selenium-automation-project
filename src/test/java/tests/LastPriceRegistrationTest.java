@@ -6,7 +6,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import utils.ScreenshotUtils;
 import java.time.Duration;
 import java.util.List;
 
@@ -21,10 +20,6 @@ public class LastPriceRegistrationTest extends BaseTest {
         
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
         Thread.sleep(5000); // המתנה ארוכה לטעינת הדף
-
-        // צילום מסך של הדף לפני מילוי
-        ScreenshotUtils.takeScreenshot(driver, "lastprice_registration_before.png");
-        Thread.sleep(2000);
 
         // מילוי הטופס עם הנתונים המדויקים לפי השדות שמצאנו
         String timestamp = String.valueOf(System.currentTimeMillis());
@@ -88,10 +83,6 @@ public class LastPriceRegistrationTest extends BaseTest {
 
         Thread.sleep(3000);
         
-        // צילום מסך אחרי מילוי
-        ScreenshotUtils.takeScreenshot(driver, "lastprice_registration_filled.png");
-        Thread.sleep(2000);
-
         // בדיקה כמה שדות מולאו בהצלחה
         int filledCount = countFilledFields();
         System.out.println("\n✓ סה\"כ " + filledCount + " שדות מולאו בהצלחה");
@@ -114,9 +105,6 @@ public class LastPriceRegistrationTest extends BaseTest {
             // לחיצה על הכפתור דרך JavaScript
             ((org.openqa.selenium.JavascriptExecutor) driver).executeScript("arguments[0].click();", registerButton);
             Thread.sleep(5000); // המתנה ארוכה אחרי שליחה
-            
-            ScreenshotUtils.takeScreenshot(driver, "lastprice_registration_after_submit.png");
-            Thread.sleep(2000);
             
             String urlAfter = driver.getCurrentUrl();
             System.out.println("URL אחרי שליחה: " + urlAfter);
@@ -282,7 +270,6 @@ public class LastPriceRegistrationTest extends BaseTest {
                         if (isChecked) {
                             checkedCount++;
                             System.out.println("✓✓✓ תיבה " + checkedCount + " נסמנה בהצלחה! ✓✓✓");
-                            ScreenshotUtils.takeScreenshot(driver, "checkbox_" + checkedCount + "_checked.png");
                         } else {
                             System.out.println("✗✗✗ תיבה לא נסמנה למרות כל הניסיונות ✗✗✗");
                         }
@@ -347,7 +334,6 @@ public class LastPriceRegistrationTest extends BaseTest {
                         if (isChecked) {
                             checkedCount++;
                             System.out.println("✓ תיבה " + checkedCount + " נסמנה!");
-                            ScreenshotUtils.takeScreenshot(driver, "checkbox_" + checkedCount + "_checked.png");
                         }
                         
                     } catch (Exception e) {

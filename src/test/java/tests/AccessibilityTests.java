@@ -5,7 +5,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 import pages.AccessibilityPage;
-import utils.ScreenshotUtils;
 
 @Listeners(TestResultLogger.class)
 public class AccessibilityTests extends BaseTest {
@@ -30,7 +29,6 @@ public class AccessibilityTests extends BaseTest {
         Thread.sleep(6000); // extended visibility
         boolean darkActive = page.verifyDarkContrastActive();
         System.out.println("=== Dark contrast active? " + darkActive);
-        try { System.out.println("=== Screenshot: " + ScreenshotUtils.takeScreenshot(driver, "dark_contrast_test.png")); } catch (Exception ignored) {}
         Assert.assertTrue(darkActive, "Dark contrast should be active");
 
         System.out.println("=== Resetting and closing menu...");
@@ -57,7 +55,6 @@ public class AccessibilityTests extends BaseTest {
             lightActive = page.verifyLightContrastActive();
         }
         System.out.println("=== Light contrast active? " + lightActive);
-        try { System.out.println("=== Screenshot: " + ScreenshotUtils.takeScreenshot(driver, "light_contrast_test.png")); } catch (Exception ignored) {}
         Assert.assertTrue(lightActive, "Light contrast should be active");
 
         System.out.println("=== Resetting and closing menu...");
