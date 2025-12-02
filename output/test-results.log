@@ -40,3 +40,19 @@ Summary: passed=2, failed=0, skipped=0
 ================ End Run ================
 
 
+================ Test Run @ 2025-12-02 10:52:59 ================
+Suite start: Registration Form Test
+START | test1_SuccessfulRegistration
+PASS  | test1_SuccessfulRegistration (147646 ms)
+START | test2_DuplicateEmailRegistration
+PASS  | test2_DuplicateEmailRegistration (58205 ms)
+START | test3_RequiredFieldsValidation
+PASS  | test3_RequiredFieldsValidation (53739 ms)
+START | test4_InvalidPhoneValidation
+PASS  | test4_InvalidPhoneValidation (61472 ms)
+Suite finish: Registration Form Test (336531 ms)
+
+Summary: passed=4, failed=0, skipped=0
+================ End Run ================
+
+

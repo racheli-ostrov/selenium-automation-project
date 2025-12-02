@@ -73,6 +73,13 @@ public class RegistrationPage extends BasePage {
                         String displayValue = (fieldNames[i].contains("pass")) ? "****" : values.get(index);
                         System.out.println("✓ מולא " + fieldLabels[i] + ": " + displayValue);
                         Thread.sleep(500);
+                        
+                        // המתנה נוספת אחרי מילוי שדה הרחוב - המערכת צריכה לטעון ולאמת את הרחוב
+                        if (fieldNames[i].equals("cshn")) {
+                            System.out.println("  → ממתין 2 שניות לאימות הרחוב...");
+                            Thread.sleep(2000);
+                        }
+                        
                         index++;
                     }
                 }

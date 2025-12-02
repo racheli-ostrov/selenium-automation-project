@@ -50,6 +50,8 @@ public class LastPriceRegistrationTest extends BaseTest {
         
         // שדה 6: שם הרחוב
         fillFieldById("rf-cshn", "רחוב הרצל", "שם רחוב");
+        System.out.println("  → ממתין 2 שניות נוספות לאימות הרחוב במערכת...");
+        Thread.sleep(2000); // המתנה נוספת לאימות הרחוב
         Thread.sleep(1000);
         
         // שדה 7: מספר בית
